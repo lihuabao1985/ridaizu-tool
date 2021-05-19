@@ -1,0 +1,2 @@
+# ridaizu-tool
+ridaizu-tool
