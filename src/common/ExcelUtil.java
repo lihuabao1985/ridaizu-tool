@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFDataValidationHelper;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -296,11 +296,11 @@ public class ExcelUtil {
             switch (cell.getCellType()) {
             // 数値
             // 日付も数値として判定される
-            case Cell.CELL_TYPE_NUMERIC:
+            case CellType.NUMERIC:
 
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
+                if (DateUtil.isCellDateFormatted(cell)) {
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-                    Date date = HSSFDateUtil.getJavaDate(cell.getNumericCellValue());
+                    Date date = DateUtil.getJavaDate(cell.getNumericCellValue());
                     value = sdf.format(date);
                 } else {
                     DecimalFormat df = new DecimalFormat("0");
@@ -308,20 +308,20 @@ public class ExcelUtil {
                 }
                 break;
             // 関数（SUMとかIFとか）
-            case Cell.CELL_TYPE_FORMULA:
+            case CellType.FORMULA:
     //            value = String.valueOf(cell.getCellFormula());
                 value = getStringFormulaValue(cell);
                 break;
             // 真偽
-            case Cell.CELL_TYPE_BOOLEAN:
+            case CellType.BOOLEAN:
                 value = Boolean.toString(cell.getBooleanCellValue());
                 break;
             // 文字列
-            case Cell.CELL_TYPE_STRING:
+            case CellType.STRING:
                 value = cell.getStringCellValue();
                 break;
             // 空
-            case Cell.CELL_TYPE_BLANK:
+            case CellType.BLANK:
                 value = ""; //getStringRangeValue(cell);
                 break;
             default:
@@ -334,7 +334,7 @@ public class ExcelUtil {
 
     // セルの数式を計算し、Stringとして取得する例
     public static String getStringFormulaValue(Cell cell) {
-        assert cell.getCellType() == Cell.CELL_TYPE_FORMULA;
+        assert cell.getCellType() == CellType.FORMULA;
 
         Workbook book = cell.getSheet().getWorkbook();
         CreationHelper helper = book.getCreationHelper();
@@ -343,13 +343,13 @@ public class ExcelUtil {
         try {
             CellValue value = evaluator.evaluate(cell);
             switch (value.getCellType()) {
-            case Cell.CELL_TYPE_STRING:
+            case CellType.STRING:
                 return value.getStringValue();
-            case Cell.CELL_TYPE_NUMERIC:
+            case CellType.NUMERIC:
                 DecimalFormat df = new DecimalFormat("0");
                 return df.format(value.getNumberValue());
 //            return Double.toString(value.getNumberValue());
-            case Cell.CELL_TYPE_BOOLEAN:
+            case CellType.BOOLEAN:
                 return Boolean.toString(value.getBooleanValue());
             default:
                 System.out.println(value.getCellType());
@@ -667,22 +667,22 @@ public class ExcelUtil {
 //            destCell.setCellValue(getStringValue(srcCell));
 
             switch (srcCell.getCellType()) {
-            case Cell.CELL_TYPE_BLANK:
+            case CellType.BLANK:
                 destCell.setCellValue(srcCell.getStringCellValue());
                 break;
-            case Cell.CELL_TYPE_BOOLEAN:
+            case CellType.BOOLEAN:
                 destCell.setCellValue(srcCell.getBooleanCellValue());
                 break;
-            case Cell.CELL_TYPE_ERROR:
+            case CellType.ERROR:
                 destCell.setCellErrorValue(srcCell.getErrorCellValue());
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case CellType.FORMULA:
                 destCell.setCellFormula(srcCell.getCellFormula());
                 break;
-            case Cell.CELL_TYPE_NUMERIC:
+            case CellType.NUMERIC:
                 destCell.setCellValue(srcCell.getNumericCellValue());
                 break;
-            case Cell.CELL_TYPE_STRING:
+            case CellType.STRING:
                 destCell.setCellValue(srcCell.getRichStringCellValue());
                 break;
             }
@@ -779,24 +779,24 @@ public class ExcelUtil {
             destCell.setCellValue(getStringValue(srcCell));
 
 //            switch (srcCell.getCellType()) {
-//            case Cell.CELL_TYPE_BLANK:
+//            case CellType.BLANK:
 //                if (!Strings.isNullOrEmpty(srcCell.getStringCellValue())) {
 //                    destCell.setCellValue(srcCell.getStringCellValue());
 //                }
 //                break;
-//            case Cell.CELL_TYPE_BOOLEAN:
+//            case CellType.BOOLEAN:
 //                destCell.setCellValue(srcCell.getBooleanCellValue());
 //                break;
-//            case Cell.CELL_TYPE_ERROR:
+//            case CellType.ERROR:
 //                destCell.setCellErrorValue(srcCell.getErrorCellValue());
 //                break;
-//            case Cell.CELL_TYPE_FORMULA:
+//            case CellType.FORMULA:
 //                destCell.setCellFormula(srcCell.getCellFormula());
 //                break;
-//            case Cell.CELL_TYPE_NUMERIC:
+//            case CellType.NUMERIC:
 //                destCell.setCellValue(srcCell.getNumericCellValue());
 //                break;
-//            case Cell.CELL_TYPE_STRING:
+//            case CellType.STRING:
 //                destCell.setCellValue(srcCell.getRichStringCellValue());
 //                break;
 //            }
@@ -849,24 +849,24 @@ public class ExcelUtil {
             descCell.setCellStyle(srcCell.getCellStyle());
 
             switch (srcCell.getCellType()) {
-            case Cell.CELL_TYPE_BLANK:
+            case CellType.BLANK:
                 if (!Strings.isNullOrEmpty(srcCell.getStringCellValue())) {
                     descCell.setCellValue(srcCell.getStringCellValue());
                 }
                 break;
-            case Cell.CELL_TYPE_BOOLEAN:
+            case CellType.BOOLEAN:
                 descCell.setCellValue(srcCell.getBooleanCellValue());
                 break;
-            case Cell.CELL_TYPE_ERROR:
+            case CellType.ERROR:
                 descCell.setCellErrorValue(srcCell.getErrorCellValue());
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case CellType.FORMULA:
                 descCell.setCellFormula(srcCell.getCellFormula());
                 break;
-            case Cell.CELL_TYPE_NUMERIC:
+            case CellType.NUMERIC:
                 descCell.setCellValue(srcCell.getNumericCellValue());
                 break;
-            case Cell.CELL_TYPE_STRING:
+            case CellType.STRING:
                 descCell.setCellValue(srcCell.getRichStringCellValue());
                 break;
             }
@@ -911,24 +911,24 @@ public class ExcelUtil {
             toCell.setCellStyle(fromCell.getCellStyle());
 
             switch (fromCell.getCellType()) {
-            case Cell.CELL_TYPE_BLANK:
+            case CellType.BLANK:
                 if (!Strings.isNullOrEmpty(fromCell.getStringCellValue())) {
                     toCell.setCellValue(fromCell.getStringCellValue());
                 }
                 break;
-            case Cell.CELL_TYPE_BOOLEAN:
+            case CellType.BOOLEAN:
                 toCell.setCellValue(fromCell.getBooleanCellValue());
                 break;
-            case Cell.CELL_TYPE_ERROR:
+            case CellType.ERROR:
                 toCell.setCellErrorValue(fromCell.getErrorCellValue());
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case CellType.FORMULA:
                 toCell.setCellFormula(fromCell.getCellFormula());
                 break;
-            case Cell.CELL_TYPE_NUMERIC:
+            case CellType.NUMERIC:
                 toCell.setCellValue(fromCell.getNumericCellValue());
                 break;
-            case Cell.CELL_TYPE_STRING:
+            case CellType.STRING:
                 toCell.setCellValue(fromCell.getRichStringCellValue());
                 break;
             }
@@ -991,46 +991,46 @@ public class ExcelUtil {
 //
 ////                // セルの値をコピー
 ////                switch (fromCell.getCellType()) {
-////                case Cell.CELL_TYPE_NUMERIC:
-////                    if (HSSFDateUtil.isCellDateFormatted(fromCell)) {
+////                case CellType.NUMERIC:
+////                    if (DateUtil.isCellDateFormatted(fromCell)) {
 ////                        toCell.setCellValue(fromCell.getDateCellValue());
 ////                    } else {
 ////                        toCell.setCellValue(fromCell.getNumericCellValue());
 ////                    }
 ////                    break;
-////                case Cell.CELL_TYPE_STRING:
+////                case CellType.STRING:
 ////                    toCell.setCellValue(fromCell.getStringCellValue());
 ////                    break;
-////                case Cell.CELL_TYPE_BOOLEAN:
+////                case CellType.BOOLEAN:
 ////                    toCell.setCellValue(fromCell.getBooleanCellValue());
 ////                    break;
-////                case Cell.CELL_TYPE_FORMULA:
+////                case CellType.FORMULA:
 ////                    toCell.setCellValue(fromCell.getCellFormula());
 ////                    break;
-////                case Cell.CELL_TYPE_BLANK:
+////                case CellType.BLANK:
 ////                    break;
 ////                }
 //
 //
 //                switch (fromCell.getCellType()) {
-//                case Cell.CELL_TYPE_BLANK:
+//                case CellType.BLANK:
 //                    if (!Strings.isNullOrEmpty(fromCell.getStringCellValue())) {
 //                        toCell.setCellValue(fromCell.getStringCellValue());
 //                    }
 //                    break;
-//                case Cell.CELL_TYPE_BOOLEAN:
+//                case CellType.BOOLEAN:
 //                    toCell.setCellValue(fromCell.getBooleanCellValue());
 //                    break;
-//                case Cell.CELL_TYPE_ERROR:
+//                case CellType.ERROR:
 //                    toCell.setCellErrorValue(fromCell.getErrorCellValue());
 //                    break;
-//                case Cell.CELL_TYPE_FORMULA:
+//                case CellType.FORMULA:
 //                    toCell.setCellFormula(fromCell.getCellFormula());
 //                    break;
-//                case Cell.CELL_TYPE_NUMERIC:
+//                case CellType.NUMERIC:
 //                    toCell.setCellValue(fromCell.getNumericCellValue());
 //                    break;
-//                case Cell.CELL_TYPE_STRING:
+//                case CellType.STRING:
 //                    toCell.setCellValue(fromCell.getRichStringCellValue());
 //                    break;
 //                }
@@ -1053,7 +1053,7 @@ public class ExcelUtil {
                }
                Cell cNext = row.getCell(cID + 1);
                if (cNext != null) {
-                   Cell cNew = row.createCell(cID, cNext.getCellTypeEnum());
+                   Cell cNew = row.createCell(cID, cNext.getCellType());
                    cloneCell(cNew, cNext);
                    if (rId == 0) {
                        sheet.setColumnWidth(cID, sheet.getColumnWidth(cID + 1));
@@ -1073,15 +1073,15 @@ public class ExcelUtil {
        cNew.setCellComment(cOld.getCellComment());
        cNew.setCellStyle(cOld.getCellStyle());
 
-       if (CellType.BOOLEAN == cNew.getCellTypeEnum()) {
+       if (CellType.BOOLEAN == cNew.getCellType()) {
            cNew.setCellValue(cOld.getBooleanCellValue());
-       } else if (CellType.NUMERIC == cNew.getCellTypeEnum()) {
+       } else if (CellType.NUMERIC == cNew.getCellType()) {
            cNew.setCellValue(cOld.getNumericCellValue());
-       } else if (CellType.STRING == cNew.getCellTypeEnum()) {
+       } else if (CellType.STRING == cNew.getCellType()) {
            cNew.setCellValue(cOld.getStringCellValue());
-       } else if (CellType.ERROR == cNew.getCellTypeEnum()) {
+       } else if (CellType.ERROR == cNew.getCellType()) {
            cNew.setCellValue(cOld.getErrorCellValue());
-       } else if (CellType.FORMULA == cNew.getCellTypeEnum()) {
+       } else if (CellType.FORMULA == cNew.getCellType()) {
            cNew.setCellValue(cOld.getCellFormula());
        }
    }
